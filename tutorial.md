@@ -1,3 +1,7 @@
+David J. Harris
+davharris@ucdavis.edu
+Species Distribution Modeling tutorial, part 1
+
 Version 0.1.0
 
 # Part 1: Model types and overfitting 
@@ -151,4 +155,5 @@ That's a lot to unpack, so I'm just briefly going to go over what each of these 
   * this is a data.frame containing the predictor variables (just `x`, in this case)
 * `n.trees`
   * This is the maximum number of trees to include in the boosted model.  10000 is a good default.
+
 
