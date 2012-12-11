@@ -1,5 +1,7 @@
 David J. Harris
+
 davharris@ucdavis.edu
+
 Species Distribution Modeling tutorial, part 1
 
 Version 0.1.1
@@ -151,3 +153,4 @@ That's a lot to unpack, so I'm just briefly going to go over what each of these 
   * This is the maximum number of trees to include in the boosted model.  10000 is a good default.
 
 
+<a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">SDM tutorial</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/davharris/SDM-tutorial" property="cc:attributionName" rel="cc:attributionURL">David J. Harris</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a>.
