@@ -2,7 +2,7 @@ David J. Harris
 davharris@ucdavis.edu
 Species Distribution Modeling tutorial, part 1
 
-Version 0.1.0
+Version 0.1.1
 
 # Part 1: Model types and overfitting 
 
@@ -59,7 +59,7 @@ Throughout, I'll use thick black lines to denote this TRUTH.  All the models bel
 
 As noted above, in the real world, we won't actually know what the TRUTH is, so we have to rely on samples.  Here are six examples of random samples that could be drawn from the TRUTH.  Black dots at $y = 1$ are for presences; red dots at $y = 0$ are for absences.
 
-```{r x, echo = FALSE}
+```{r x, echo = FALSE, dpi=120}
 make.observations = function(n){
   # choose x values
   x.observed = runif(n, -6, 6)
@@ -75,9 +75,10 @@ observations.list = replicate(6, make.observations(200), simplify = FALSE)
 
 # plot the observations (red zeros are absences, black ones are presences) 
 # and f
+par(mfrow = c(2, 3))
 for(observations in observations.list){
     default.plot()
-    points(observations$y ~ observations$x, col = 2 - observations$y)
+    points(observations$y ~ observations$x, col = 2 - observations$y, cex = .5)
 }
 
 long.data = do.call(rbind, observations.list)

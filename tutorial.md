@@ -2,7 +2,7 @@ David J. Harris
 davharris@ucdavis.edu
 Species Distribution Modeling tutorial, part 1
 
-Version 0.1.0
+Version 0.1.1
 
 # Part 1: Model types and overfitting 
 
@@ -21,7 +21,6 @@ Part 2 will go into some more detail on a specific method, called boosting.
 With that out of the way, I'm going to play God for a moment, and invent a species whose probability of occurring at a site given its levelof environmental factor *x* is exactly defined by the following function:
 
 
-
 ```r
 f = function(x) {
     pt(x/2 + sin(x)^2 - x^2/5 + ifelse(x > 0, 0.5, -0.5), df = 2)
@@ -29,11 +28,9 @@ f = function(x) {
 ```
 
 
-
-
 The function looks like this:
 
-![plot of chunk plot.God](figure/plot.God.png) 
+![plot of chunk plot.God](figure/plot_God.png) 
 
 
 Throughout, I'll use thick black lines to denote this TRUTH.  All the models below will be trying to approximate this function, but without actually knowing what it is.  All the models get to see is a few random samples from it.
@@ -42,7 +39,7 @@ Throughout, I'll use thick black lines to denote this TRUTH.  All the models bel
 
 As noted above, in the real world, we won't actually know what the TRUTH is, so we have to rely on samples.  Here are six examples of random samples that could be drawn from the TRUTH.  Black dots at $y = 1$ are for presences; red dots at $y = 0$ are for absences.
 
-![plot of chunk x](figure/x1.png) ![plot of chunk x](figure/x2.png) ![plot of chunk x](figure/x3.png) ![plot of chunk x](figure/x4.png) ![plot of chunk x](figure/x5.png) ![plot of chunk x](figure/x6.png) 
+![plot of chunk x](figure/x.png) 
 
 
 Remember, the goal is to reconstruct the black curve using only the samples we happen to observe.
@@ -79,7 +76,7 @@ These models look *somewhat* better than the glms, since they get closer to the 
 
 So we might try increasing the number of degrees of freedom we give it, allowing it to make curvier shapes.  Here are the results with `df = 8`:
 
-![plot of chunk gam.overfit](figure/gam.overfit.png) 
+![plot of chunk gam.overfit](figure/gam_overfit.png) 
 
 
 That seems to look better in most cases.  In particular, it no longer looks like all six models are consistently wrong in the same ways, which makes it seem like the model is finally flexible enough to capture what's going on.
@@ -90,7 +87,7 @@ The `mgcv` version of `gam` has some features for automatically selecting how ma
 
 One thing that's worth noting is that, as you add more data, you can fit more complex models without overfitting as much.  The next graph shows what happens if you use `df = 8` on one big data set with 1200 observations, instead of on six little ones with 200 each:
 
-![plot of chunk gam.overfit2](figure/gam.overfit2.png) 
+![plot of chunk gam.overfit2](figure/gam_overfit2.png) 
 
 
 
@@ -98,7 +95,7 @@ Note that it actually gets most of the shape right, and doesn't have a lot of su
 
 Even with a lot of data, it's still possible to overfit. Here's what happens if you give the model 50 degrees of freedom:
 
-![plot of chunk gam.overfit3](figure/gam.overfit3.png) 
+![plot of chunk gam.overfit3](figure/gam_overfit3.png) 
 
 
 Practically every outlier gets its own wiggle in the curve.  That's a bad sign, since it overshoots the TRUTH a dozen or so times, often by quite a bit
@@ -126,7 +123,6 @@ In part 2, we'll see a bit more about how to actually implement this kind of mod
 At the end of Part 1, the code I used to fit the model with all 1200 observations looked like this:
 
 
-
 ```r
 gbm.model = gbm(
   y ~ x, 
@@ -139,8 +135,6 @@ gbm.model = gbm(
   shrinkage = .0005
 )
 ```
-
-
 
 
 That's a lot to unpack, so I'm just briefly going to go over what each of these lines does.
