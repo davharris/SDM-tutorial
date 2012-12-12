@@ -23,6 +23,7 @@ Part 2 will go into some more detail on a specific method, called boosting.
 With that out of the way, I'm going to play God for a moment, and invent a species whose probability of occurring at a site given its levelof environmental factor *x* is exactly defined by the following function:
 
 
+
 ```r
 f = function(x) {
     pt(x/2 + sin(x)^2 - x^2/5 + ifelse(x > 0, 0.5, -0.5), df = 2)
@@ -30,9 +31,11 @@ f = function(x) {
 ```
 
 
+
+
 The function looks like this:
 
-![plot of chunk plot.God](figure/plot_God.png) 
+![plot of chunk plot.God](figure/plot.God.png) 
 
 
 Throughout, I'll use thick black lines to denote this TRUTH.  All the models below will be trying to approximate this function, but without actually knowing what it is.  All the models get to see is a few random samples from it.
@@ -59,13 +62,14 @@ where `poly(x, 3)` indicates that we use a third-order polynomial (a cubic).
 ![plot of chunk glm](figure/glm.png) 
 
 
-Note that the glms don't really capture the shape of the curve, regardless of which set of 200 observations we feed to the model. There seem to be some systematic biases, with all six models missing the full height of the main peak and then remaining too high on both ends as it trails off. The glm simply can't capture what's going on.
+Note that the glms don't really capture the shape of the curve, regardless of which set of 200 observations we feed to the model. There seem to be some systematic biases, with all six models missing the full height of the main peak and then remaining too high on both ends as it trails off. The glm simply can't capture what's going on. In principle, if we included enough polynomial terms, we'd be able to get the right shape, but there would be horrible overfitting problems with that approach. So in practice, if we want anything more accurate than "the response to X is hump-shaped", we need a more flexible model form.  That's where the zoo of nonparametric and semiparametric regression techniques comes into play.
 
-Let's see if something more flexible like a generalized additive model (GAM) does better. For simplicity's sake, I used the `gam` function from the `gam` package, although the `mgcv` package is probably better for most purposes.
+Let's see if a generalized additive model (GAM) does better. GAMs drop the assumption that we know the functional form of the curve (e.g. that it's a polynomial), but still assume that the curve doesn't jump around too much.  Formally, that usually involves constraints or penalties on the second derivative of the function.
 
-GAMs drop the assumption that we know the functional form of the curve (e.g. that it's a polynomial), but still assume that the curve doesn't jump around too much.  Formally, that usually involves constraints or penalties on the second derivative of the function.
 
-In `R`, the syntax for GAMs is almost identical as for GLMs:
+For simplicity's sake, I used the `gam` function from the `gam` package, although the `mgcv` package is probably better for most purposes.
+
+In `R`, the syntax for GAMs in either package is almost the same as for GLMs:
 
 `glm.model = glm(y ~ s(x, df = 4), family = binomial, data = data)`
 
@@ -78,7 +82,7 @@ These models look *somewhat* better than the glms, since they get closer to the 
 
 So we might try increasing the number of degrees of freedom we give it, allowing it to make curvier shapes.  Here are the results with `df = 8`:
 
-![plot of chunk gam.overfit](figure/gam_overfit.png) 
+![plot of chunk gam.overfit](figure/gam.overfit.png) 
 
 
 That seems to look better in most cases.  In particular, it no longer looks like all six models are consistently wrong in the same ways, which makes it seem like the model is finally flexible enough to capture what's going on.
@@ -89,7 +93,7 @@ The `mgcv` version of `gam` has some features for automatically selecting how ma
 
 One thing that's worth noting is that, as you add more data, you can fit more complex models without overfitting as much.  The next graph shows what happens if you use `df = 8` on one big data set with 1200 observations, instead of on six little ones with 200 each:
 
-![plot of chunk gam.overfit2](figure/gam_overfit2.png) 
+![plot of chunk gam.overfit2](figure/gam.overfit2.png) 
 
 
 
@@ -97,7 +101,7 @@ Note that it actually gets most of the shape right, and doesn't have a lot of su
 
 Even with a lot of data, it's still possible to overfit. Here's what happens if you give the model 50 degrees of freedom:
 
-![plot of chunk gam.overfit3](figure/gam_overfit3.png) 
+![plot of chunk gam.overfit3](figure/gam.overfit3.png) 
 
 
 Practically every outlier gets its own wiggle in the curve.  That's a bad sign, since it overshoots the TRUTH a dozen or so times, often by quite a bit
@@ -118,11 +122,14 @@ The curve looks far better if we let it see all 1200 observations:
 
 In part 2, we'll see a bit more about how to actually implement this kind of model.
 
+Also, we've been pretty sloppy about what it means for a model to be good or bad, to overfit or underfit.  In part 3 (not yet written), we can discuss what makes a good model in more detail.
+
 
 # Part 2: outline
 
 
 At the end of Part 1, the code I used to fit the model with all 1200 observations looked like this:
+
 
 
 ```r
@@ -139,6 +146,8 @@ gbm.model = gbm(
 ```
 
 
+
+
 That's a lot to unpack, so I'm just briefly going to go over what each of these lines does.
 
 * `gbm.model = gbm(`
@@ -151,6 +160,10 @@ That's a lot to unpack, so I'm just briefly going to go over what each of these 
   * this is a data.frame containing the predictor variables (just `x`, in this case)
 * `n.trees`
   * This is the maximum number of trees to include in the boosted model.  10000 is a good default.
+* `verbose = FALSE`
+  * This turns off the huge stream of updates that `gbm` normally emits, mainly so that it doesn't clutter up this document.  In practice, it can be handy to leave it on so you can see what the program is up to.
+* `interaction.depth = 3`
+  * This 
 
 
 <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">SDM tutorial</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/davharris/SDM-tutorial" property="cc:attributionName" rel="cc:attributionURL">David J. Harris</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a>.

@@ -114,13 +114,14 @@ for(i in 1:length(observations.list)){
 
 ```
 
-Note that the glms don't really capture the shape of the curve, regardless of which set of 200 observations we feed to the model. There seem to be some systematic biases, with all six models missing the full height of the main peak and then remaining too high on both ends as it trails off. The glm simply can't capture what's going on.
+Note that the glms don't really capture the shape of the curve, regardless of which set of 200 observations we feed to the model. There seem to be some systematic biases, with all six models missing the full height of the main peak and then remaining too high on both ends as it trails off. The glm simply can't capture what's going on. In principle, if we included enough polynomial terms, we'd be able to get the right shape, but there would be horrible overfitting problems with that approach. So in practice, if we want anything more accurate than "the response to X is hump-shaped", we need a more flexible model form.  That's where the zoo of nonparametric and semiparametric regression techniques comes into play.
 
-Let's see if something more flexible like a generalized additive model (GAM) does better. For simplicity's sake, I used the `gam` function from the `gam` package, although the `mgcv` package is probably better for most purposes.
+Let's see if a generalized additive model (GAM) does better. GAMs drop the assumption that we know the functional form of the curve (e.g. that it's a polynomial), but still assume that the curve doesn't jump around too much.  Formally, that usually involves constraints or penalties on the second derivative of the function.
 
-GAMs drop the assumption that we know the functional form of the curve (e.g. that it's a polynomial), but still assume that the curve doesn't jump around too much.  Formally, that usually involves constraints or penalties on the second derivative of the function.
 
-In `R`, the syntax for GAMs is almost identical as for GLMs:
+For simplicity's sake, I used the `gam` function from the `gam` package, although the `mgcv` package is probably better for most purposes.
+
+In `R`, the syntax for GAMs in either package is almost the same as for GLMs:
 
 `glm.model = glm(y ~ s(x, df = 4), family = binomial, data = data)`
 
@@ -261,6 +262,8 @@ lines(
 
 In part 2, we'll see a bit more about how to actually implement this kind of model.
 
+Also, we've been pretty sloppy about what it means for a model to be good or bad, to overfit or underfit.  In part 3 (not yet written), we can discuss what makes a good model in more detail.
+
 
 # Part 2: outline
 
@@ -292,6 +295,10 @@ That's a lot to unpack, so I'm just briefly going to go over what each of these 
   * this is a data.frame containing the predictor variables (just `x`, in this case)
 * `n.trees`
   * This is the maximum number of trees to include in the boosted model.  10000 is a good default.
+* `verbose = FALSE`
+  * This turns off the huge stream of updates that `gbm` normally emits, mainly so that it doesn't clutter up this document.  In practice, it can be handy to leave it on so you can see what the program is up to.
+* `interaction.depth = 3`
+  * This 
 
 
 <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">SDM tutorial</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/davharris/SDM-tutorial" property="cc:attributionName" rel="cc:attributionURL">David J. Harris</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a>.
